@@ -3,13 +3,11 @@ import axios from 'axios';
 import { API_BASE_URL } from './config';
 
 const Analytics = () => {
-  const [feedbacks, setFeedbacks] = useState([]);
   const [analytics, setAnalytics] = useState(null);
 
-  const fetchFeedbacks = async () => {
+  const fetchAnalytics = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/api/feedback`);
-      setFeedbacks(response.data);
       calculateAnalytics(response.data);
     } catch (error) {
       console.error('Error fetching feedback:', error);
@@ -58,7 +56,7 @@ const Analytics = () => {
   };
 
   useEffect(() => {
-    fetchFeedbacks();
+    fetchAnalytics();
   }, []);
 
   // Star rating display component

@@ -2,11 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import FeedbackForm from './FeedbackForm';
 import Dashboard from './Dashboard';
-import Analytics from './Analytics';  // ADD THIS IMPORT
+import Analytics from './Analytics';
 import './styles.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-// New Footer component for customizability
 const Footer = ({ copyrightYear = new Date().getFullYear(), appName = 'Student Feedback App', additionalLinks = [] }) => {
   return (
     <footer className="bg-secondary text-white text-center py-3 mt-auto">
@@ -49,7 +48,7 @@ function App() {
                   <Link className="nav-link nav-link-custom text-white" to="/dashboard">View Feedback</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link nav-link-custom text-white" to="/analytics">Dashboard</Link> {/* NEW LINK */}
+                  <Link className="nav-link nav-link-custom text-white" to="/analytics">Dashboard</Link>
                 </li>
               </ul>
             </div>
@@ -59,7 +58,7 @@ function App() {
           <Routes>
             <Route path="/" element={<FeedbackForm />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/analytics" element={<Analytics />} /> {/* NEW ROUTE */}
+            <Route path="/analytics" element={<Analytics />} />
           </Routes>
         </main>
         <Footer {...footerProps} />
