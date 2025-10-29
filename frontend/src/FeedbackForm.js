@@ -17,11 +17,11 @@ const FeedbackForm = () => {
     const newErrors = {};
 
     // Full Name validation - letters and spaces only, min 2 words
-    const nameRegex = /^[A-Za-z\s]+$/;
+    const nameRegex = /^[A-Za-z\s\-']+$/;
     if (!fullName.trim()) {
       newErrors.fullName = 'Full Name is required';
     } else if (!nameRegex.test(fullName)) {
-      newErrors.fullName = 'Full Name can only contain letters and spaces';
+      newErrors.fullName = 'Full Name can only contain letters, spaces, hyphens, and apostrophes';
     } else if (fullName.trim().split(' ').length < 2) {
       newErrors.fullName = 'Please enter your full name (first and last name)';
     } else if (fullName.trim().length < 5) {
@@ -57,11 +57,14 @@ const FeedbackForm = () => {
     return newErrors;
   };
 
-  // REAL-TIME NUMBER BLOCKING for Full Name
+  // REAL-TIME NUMBER BLOCKING for Full Name - FIXED VERSION
   const handleFullNameChange = (e) => {
     const value = e.target.value;
-    // Block numbers and special characters in real-time
-    const filteredValue = value.replace(/[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, '');
+    
+    // COMPLETE BLOCK: Only allow letters, spaces, hyphens, and apostrophes
+    // This will PREVENT numbers from ever appearing
+    const filteredValue = value.replace(/[^A-Za-z\s\-']/g, '');
+    
     setFullName(filteredValue);
     
     // Clear error when user types
@@ -167,7 +170,7 @@ const FeedbackForm = () => {
                   className={`form-control ${errors.fullName ? 'is-invalid' : ''}`}
                   id="fullName"
                   value={fullName}
-                  onChange={handleFullNameChange} // UPDATED: Uses the blocking function
+                  onChange={handleFullNameChange}
                   placeholder="Enter your first and last name"
                   required
                 />
