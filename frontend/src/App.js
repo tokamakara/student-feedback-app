@@ -2,8 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import FeedbackForm from './FeedbackForm';
 import Dashboard from './Dashboard';
+import Analytics from './Analytics';  // ADD THIS IMPORT
 import './styles.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // ADDED FOR MOBILE MENU
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 // New Footer component for customizability
 const Footer = ({ copyrightYear = new Date().getFullYear(), appName = 'Student Feedback App', additionalLinks = [] }) => {
@@ -24,23 +25,22 @@ const Footer = ({ copyrightYear = new Date().getFullYear(), appName = 'Student F
 };
 
 function App() {
-  // Example of customizing the footer (removed additional links)
   const footerProps = {
-    copyrightYear: new Date().getFullYear(), // Dynamic year (2025 based on current date)
+    copyrightYear: new Date().getFullYear(),
     appName: 'Student Feedback App',
-    additionalLinks: [] // No links
+    additionalLinks: []
   };
 
   return (
     <Router>
-      <div className="d-flex flex-column bg-light min-vh-100"> {/* Updated for sticky footer */}
-        <nav className="navbar navbar-expand-lg navbar-dark bg-secondary shadow-sm"> {/* Gray background, dark for white text */}
+      <div className="d-flex flex-column bg-light min-vh-100">
+        <nav className="navbar navbar-expand-lg navbar-dark bg-secondary shadow-sm">
           <div className="container">
-            <Link className="navbar-brand text-white" to="/">Student Feedback App</Link> {/* App title as brand, clickable to home */}
+            <Link className="navbar-brand text-white" to="/">Student Feedback App</Link>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span className="navbar-toggler-icon"></span>
             </button>
-            <div className="collapse navbar-collapse justify-content-end" id="navbarNav"> {/* Links on the right */}
+            <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
               <ul className="navbar-nav">
                 <li className="nav-item">
                   <Link className="nav-link nav-link-custom text-white" to="/">Rate Course</Link>
@@ -48,17 +48,21 @@ function App() {
                 <li className="nav-item">
                   <Link className="nav-link nav-link-custom text-white" to="/dashboard">View Feedback</Link>
                 </li>
+                <li className="nav-item">
+                  <Link className="nav-link nav-link-custom text-white" to="/analytics">Dashboard</Link> {/* NEW LINK */}
+                </li>
               </ul>
             </div>
           </div>
         </nav>
-        <main className="container my-5 flex-grow-1"> {/* flex-grow-1 to push footer down */}
+        <main className="container my-5 flex-grow-1">
           <Routes>
             <Route path="/" element={<FeedbackForm />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/analytics" element={<Analytics />} /> {/* NEW ROUTE */}
           </Routes>
         </main>
-        <Footer {...footerProps} /> {/* Pass props to customize */}
+        <Footer {...footerProps} />
       </div>
     </Router>
   );
