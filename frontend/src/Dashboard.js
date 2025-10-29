@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from './config';
 
@@ -6,17 +6,7 @@ const Dashboard = () => {
   const [feedbacks, setFeedbacks] = useState([]);
   const [analytics, setAnalytics] = useState(null);
 
-  const fetchFeedbacks = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/api/feedback`);
-      setFeedbacks(response.data);
-      calculateAnalytics(response.data);
-    } catch (error) {
-      console.error('Error fetching feedback:', error);
-    }
-  };
-
-  const calculateAnalytics = (data) => {
+  const calculateAnalytics = useCallback((data) => {
     if (data.length === 0) {
       setAnalytics(null);
       return;
@@ -51,11 +41,21 @@ const Dashboard = () => {
       ratingDistribution: ratingCount,
       courseAnalytics: courseAnalytics.sort((a, b) => b.average - a.average)
     });
-  };
+  }, []);
+
+  const fetchFeedbacks = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/feedback`);
+      setFeedbacks(response.data);
+      calculateAnalytics(response.data);
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
+    }
+  }, [calculateAnalytics]);
 
   useEffect(() => {
     fetchFeedbacks();
-  }, []);
+  }, [fetchFeedbacks]);
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this feedback?')) {
