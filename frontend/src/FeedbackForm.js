@@ -7,12 +7,12 @@ const FeedbackForm = () => {
   const [studentName, setStudentName] = useState('');
   const [courseCode, setCourseCode] = useState('');
   const [comments, setComments] = useState('');
-  const [rating, setRating] = useState(1);
+  const [rating, setRating] = useState('');
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  // Enhanced validation as per assignment requirements
+  // Enhanced validation - ALL FIELDS REQUIRED
   const validateForm = () => {
     const newErrors = {};
 
@@ -30,8 +30,17 @@ const FeedbackForm = () => {
       newErrors.courseCode = 'Course Code must be at least 2 characters';
     }
 
+    // Comments validation - REQUIRED (no longer optional)
+    if (!comments.trim()) {
+      newErrors.comments = 'Comments are required';
+    } else if (comments.trim().length < 5) {
+      newErrors.comments = 'Comments must be at least 5 characters';
+    }
+
     // Rating validation - must be between 1-5
-    if (!rating || rating < 1 || rating > 5) {
+    if (!rating) {
+      newErrors.rating = 'Rating is required';
+    } else if (rating < 1 || rating > 5) {
       newErrors.rating = 'Rating must be between 1 and 5';
     }
 
@@ -54,6 +63,14 @@ const FeedbackForm = () => {
         if (errors.courseCode) {
           const newErrors = { ...errors };
           delete newErrors.courseCode;
+          setErrors(newErrors);
+        }
+        break;
+      case 'comments':
+        setComments(value);
+        if (errors.comments) {
+          const newErrors = { ...errors };
+          delete newErrors.comments;
           setErrors(newErrors);
         }
         break;
@@ -95,7 +112,7 @@ const FeedbackForm = () => {
       setStudentName('');
       setCourseCode('');
       setComments('');
-      setRating(1);
+      setRating('');
       setErrors({});
       
       // Redirect to dashboard
@@ -126,7 +143,7 @@ const FeedbackForm = () => {
               {/* Student Name Field */}
               <div className="mb-3">
                 <label htmlFor="studentName" className="form-label">
-                  Student Name <span className="text-danger">*</span>
+                  Student Name
                 </label>
                 <input
                   type="text"
@@ -146,7 +163,7 @@ const FeedbackForm = () => {
               {/* Course Code Field */}
               <div className="mb-3">
                 <label htmlFor="courseCode" className="form-label">
-                  Course Code <span className="text-danger">*</span>
+                  Course Code
                 </label>
                 <input
                   type="text"
@@ -163,25 +180,30 @@ const FeedbackForm = () => {
                 )}
               </div>
 
-              {/* Comments Field */}
+              {/* Comments Field - NOW REQUIRED */}
               <div className="mb-3">
                 <label htmlFor="comments" className="form-label">
                   Comments
                 </label>
                 <textarea
-                  className="form-control"
+                  className={`form-control ${errors.comments ? 'is-invalid' : ''}`}
                   id="comments"
                   rows="3"
                   value={comments}
-                  onChange={(e) => setComments(e.target.value)}
-                  placeholder="Optional comments about the course..."
+                  onChange={(e) => handleInputChange('comments', e.target.value)}
+                  required
                 />
+                {errors.comments && (
+                  <div className="invalid-feedback">
+                    {errors.comments}
+                  </div>
+                )}
               </div>
 
               {/* Rating Field */}
               <div className="mb-4">
                 <label htmlFor="rating" className="form-label">
-                  Rating <span className="text-danger">*</span>
+                  Rating
                 </label>
                 <select
                   className={`form-select ${errors.rating ? 'is-invalid' : ''}`}
@@ -191,20 +213,17 @@ const FeedbackForm = () => {
                   required
                 >
                   <option value="">Select a rating</option>
-                  <option value="1">1 - Very Poor</option>
-                  <option value="2">2 - Poor</option>
-                  <option value="3">3 - Average</option>
-                  <option value="4">4 - Good</option>
-                  <option value="5">5 - Excellent</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
                 </select>
                 {errors.rating && (
                   <div className="invalid-feedback">
                     {errors.rating}
                   </div>
                 )}
-                <div className="form-text">
-                  Please rate the course from 1 (Very Poor) to 5 (Excellent)
-                </div>
               </div>
 
               {/* Submit Button */}
@@ -222,13 +241,6 @@ const FeedbackForm = () => {
                   'Submit Feedback'
                 )}
               </button>
-
-              {/* Required fields note */}
-              <div className="mt-3">
-                <small className="text-muted">
-                  Fields marked with <span className="text-danger">*</span> are required
-                </small>
-              </div>
             </form>
           </div>
         </div>
