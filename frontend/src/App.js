@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import FeedbackForm from './FeedbackForm';
 import Dashboard from './Dashboard';
-import Analytics from './Analytics';
 import './styles.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -47,9 +46,6 @@ function App() {
                 <li className="nav-item">
                   <Link className="nav-link nav-link-custom text-white" to="/dashboard">View Feedback</Link>
                 </li>
-                <li className="nav-item">
-                  <Link className="nav-link nav-link-custom text-white" to="/analytics">Dashboard</Link>
-                </li>
               </ul>
             </div>
           </div>
@@ -58,7 +54,6 @@ function App() {
           <Routes>
             <Route path="/" element={<FeedbackForm />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/analytics" element={<Analytics />} />
           </Routes>
         </main>
         <Footer {...footerProps} />
