@@ -222,7 +222,6 @@ const FeedbackForm = () => {
                   </div>
                 )}
                 <div className="form-text">
-                  {comments.length}/500 characters
                 </div>
               </div>
 
