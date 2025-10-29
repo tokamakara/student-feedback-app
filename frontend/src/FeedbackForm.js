@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from './config';
 
 const FeedbackForm = () => {
-  const [studentName, setStudentName] = useState('');
+  const [fullName, setFullName] = useState('');
   const [courseCode, setCourseCode] = useState('');
   const [comments, setComments] = useState('');
   const [rating, setRating] = useState('');
@@ -12,29 +12,39 @@ const FeedbackForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  // Enhanced validation - ALL FIELDS REQUIRED
+  // Enhanced validation - ALL FIELDS REQUIRED with proper rules
   const validateForm = () => {
     const newErrors = {};
 
-    // Student Name validation - required
-    if (!studentName.trim()) {
-      newErrors.studentName = 'Student Name is required';
-    } else if (studentName.trim().length < 2) {
-      newErrors.studentName = 'Student Name must be at least 2 characters';
+    // Full Name validation - letters and spaces only, min 2 words
+    const nameRegex = /^[A-Za-z\s]+$/;
+    if (!fullName.trim()) {
+      newErrors.fullName = 'Full Name is required';
+    } else if (!nameRegex.test(fullName)) {
+      newErrors.fullName = 'Full Name can only contain letters and spaces';
+    } else if (fullName.trim().split(' ').length < 2) {
+      newErrors.fullName = 'Please enter your full name (first and last name)';
+    } else if (fullName.trim().length < 5) {
+      newErrors.fullName = 'Full Name must be at least 5 characters';
     }
 
-    // Course Code validation - required
+    // Course Code validation - alphanumeric with specific format
+    const courseRegex = /^[A-Za-z0-9]+$/;
     if (!courseCode.trim()) {
       newErrors.courseCode = 'Course Code is required';
-    } else if (courseCode.trim().length < 2) {
-      newErrors.courseCode = 'Course Code must be at least 2 characters';
+    } else if (!courseRegex.test(courseCode)) {
+      newErrors.courseCode = 'Course Code can only contain letters and numbers';
+    } else if (courseCode.trim().length < 3) {
+      newErrors.courseCode = 'Course Code must be at least 3 characters';
     }
 
-    // Comments validation - REQUIRED (no longer optional)
+    // Comments validation - REQUIRED
     if (!comments.trim()) {
       newErrors.comments = 'Comments are required';
-    } else if (comments.trim().length < 5) {
-      newErrors.comments = 'Comments must be at least 5 characters';
+    } else if (comments.trim().length < 10) {
+      newErrors.comments = 'Comments must be at least 10 characters';
+    } else if (comments.trim().length > 500) {
+      newErrors.comments = 'Comments cannot exceed 500 characters';
     }
 
     // Rating validation - must be between 1-5
@@ -47,19 +57,26 @@ const FeedbackForm = () => {
     return newErrors;
   };
 
-  // Real-time validation on input change
+  // REAL-TIME NUMBER BLOCKING for Full Name
+  const handleFullNameChange = (e) => {
+    const value = e.target.value;
+    // Block numbers and special characters in real-time
+    const filteredValue = value.replace(/[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, '');
+    setFullName(filteredValue);
+    
+    // Clear error when user types
+    if (errors.fullName) {
+      const newErrors = { ...errors };
+      delete newErrors.fullName;
+      setErrors(newErrors);
+    }
+  };
+
+  // Real-time validation for other fields
   const handleInputChange = (field, value) => {
     switch (field) {
-      case 'studentName':
-        setStudentName(value);
-        if (errors.studentName) {
-          const newErrors = { ...errors };
-          delete newErrors.studentName;
-          setErrors(newErrors);
-        }
-        break;
       case 'courseCode':
-        setCourseCode(value);
+        setCourseCode(value.toUpperCase()); // Auto-uppercase course codes
         if (errors.courseCode) {
           const newErrors = { ...errors };
           delete newErrors.courseCode;
@@ -102,14 +119,14 @@ const FeedbackForm = () => {
     try {
       // Submit to backend
       await axios.post(`${API_BASE_URL}/api/feedback`, {
-        studentName: studentName.trim(),
+        studentName: fullName.trim(),
         courseCode: courseCode.trim(),
         comments: comments.trim(),
         rating: rating
       });
 
       // Reset form on success
-      setStudentName('');
+      setFullName('');
       setCourseCode('');
       setComments('');
       setRating('');
@@ -140,22 +157,23 @@ const FeedbackForm = () => {
             )}
 
             <form onSubmit={handleSubmit} noValidate>
-              {/* Student Name Field */}
+              {/* Full Name Field */}
               <div className="mb-3">
-                <label htmlFor="studentName" className="form-label">
-                  Student Name
+                <label htmlFor="fullName" className="form-label">
+                  Full Name
                 </label>
                 <input
                   type="text"
-                  className={`form-control ${errors.studentName ? 'is-invalid' : ''}`}
-                  id="studentName"
-                  value={studentName}
-                  onChange={(e) => handleInputChange('studentName', e.target.value)}
+                  className={`form-control ${errors.fullName ? 'is-invalid' : ''}`}
+                  id="fullName"
+                  value={fullName}
+                  onChange={handleFullNameChange} // UPDATED: Uses the blocking function
+                  placeholder="Enter your first and last name"
                   required
                 />
-                {errors.studentName && (
+                {errors.fullName && (
                   <div className="invalid-feedback">
-                    {errors.studentName}
+                    {errors.fullName}
                   </div>
                 )}
               </div>
@@ -171,6 +189,7 @@ const FeedbackForm = () => {
                   id="courseCode"
                   value={courseCode}
                   onChange={(e) => handleInputChange('courseCode', e.target.value)}
+                  placeholder="e.g., CS101, MATH202"
                   required
                 />
                 {errors.courseCode && (
@@ -180,7 +199,7 @@ const FeedbackForm = () => {
                 )}
               </div>
 
-              {/* Comments Field - NOW REQUIRED */}
+              {/* Comments Field - REQUIRED */}
               <div className="mb-3">
                 <label htmlFor="comments" className="form-label">
                   Comments
@@ -188,9 +207,10 @@ const FeedbackForm = () => {
                 <textarea
                   className={`form-control ${errors.comments ? 'is-invalid' : ''}`}
                   id="comments"
-                  rows="3"
+                  rows="4"
                   value={comments}
                   onChange={(e) => handleInputChange('comments', e.target.value)}
+                  placeholder="Share your detailed feedback about the course..."
                   required
                 />
                 {errors.comments && (
@@ -198,6 +218,9 @@ const FeedbackForm = () => {
                     {errors.comments}
                   </div>
                 )}
+                <div className="form-text">
+                  {comments.length}/500 characters
+                </div>
               </div>
 
               {/* Rating Field */}
@@ -213,11 +236,11 @@ const FeedbackForm = () => {
                   required
                 >
                   <option value="">Select a rating</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
+                  <option value="1">1 - Very Poor</option>
+                  <option value="2">2 - Poor</option>
+                  <option value="3">3 - Average</option>
+                  <option value="4">4 - Good</option>
+                  <option value="5">5 - Excellent</option>
                 </select>
                 {errors.rating && (
                   <div className="invalid-feedback">
