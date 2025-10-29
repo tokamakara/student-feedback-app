@@ -57,17 +57,6 @@ const Dashboard = () => {
     fetchFeedbacks();
   }, [fetchFeedbacks]);
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this feedback?')) {
-      try {
-        await axios.delete(`${API_BASE_URL}/api/feedback/${id}`);
-        fetchFeedbacks();
-      } catch (error) {
-        console.error('Error deleting feedback:', error);
-      }
-    }
-  };
-
   const StarRating = ({ rating }) => {
     return (
       <div className="d-inline">
@@ -87,7 +76,7 @@ const Dashboard = () => {
     <div>
       <h4 className="text-center mb-4">Feedback Dashboard</h4>
 
-      {/* SIMPLE ANALYTICS SECTION */}
+      {/* ANALYTICS SECTION */}
       {analytics && analytics.totalFeedbacks > 0 && (
         <div className="row mb-4">
           <div className="col-md-4 mb-3">
@@ -117,12 +106,15 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* FEEDBACK LIST */}
-      {feedbacks.length === 0 ? (
-        <p className="text-center text-muted">No feedback submitted yet.</p>
-      ) : (
-        <div className="row">
-          {feedbacks.map((fb) => (
+      {/* RECENT FEEDBACK SECTION - NO DELETE BUTTONS */}
+      <div className="row mt-5">
+        <div className="col-12">
+          <h5 className="text-center mb-4">Recent Feedback</h5>
+        </div>
+        {feedbacks.length === 0 ? (
+          <p className="text-center text-muted">No feedback submitted yet.</p>
+        ) : (
+          feedbacks.slice(0, 3).map((fb) => ( // Show only first 3 feedbacks
             <div key={fb.id} className="col-md-4 mb-4">
               <div className="card shadow h-100">
                 <div className="card-body">
@@ -141,16 +133,12 @@ const Dashboard = () => {
                     <span className="ms-2 badge bg-primary">{fb.rating}/5</span>
                   </p>
                 </div>
-                <div className="card-footer">
-                  <button className="btn btn-danger btn-sm" onClick={() => handleDelete(fb.id)}>
-                    Delete
-                  </button>
-                </div>
+                {/* NO CARD FOOTER WITH DELETE BUTTON */}
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </div>
     </div>
   );
 };
