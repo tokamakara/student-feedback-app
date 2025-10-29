@@ -11,3 +11,15 @@ button { padding: 5px 10px; margin-right: 10px; }
   border-radius: 5px; /* Slight rounding for modern look */
   transition: all 0.3s ease; /* Smooth transition */
 }
+
+/* Ensure proper mobile responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .card {
+    margin: 10px 0;
+  }
+}

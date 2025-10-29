@@ -2,7 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import FeedbackForm from './FeedbackForm';
 import Dashboard from './Dashboard';
-import './styles.css'; // Import custom styles if you have it from before
+import './styles.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // ADDED FOR MOBILE MENU
 
 // New Footer component for customizability
 const Footer = ({ copyrightYear = new Date().getFullYear(), appName = 'Student Feedback App', additionalLinks = [] }) => {
