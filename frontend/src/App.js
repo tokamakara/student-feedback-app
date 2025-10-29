@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 import FeedbackForm from './FeedbackForm';
 import Dashboard from './Dashboard';
+import ViewFeedback from './ViewFeedback';
 import './styles.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -58,7 +59,7 @@ function App() {
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/rate" element={<FeedbackForm />} />
-            <Route path="/view" element={<Dashboard />} />
+            <Route path="/view" element={<ViewFeedback />} />
           </Routes>
         </main>
         <Footer {...footerProps} />
